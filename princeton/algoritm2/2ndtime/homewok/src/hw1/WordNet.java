@@ -52,7 +52,7 @@ public class WordNet {
 		    	netSize++;
 		    	
 		    	for (int i = 0; i < words.length; i++) {
-		    		id2NounMap.put(vertex, words[i]);
+		    		id2NounMap.put(vertex, fields[1]);
 		    		putWord(words[i], vertex);
 		    	}
 		    }

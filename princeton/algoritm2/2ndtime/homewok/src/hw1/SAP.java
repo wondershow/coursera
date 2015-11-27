@@ -16,8 +16,8 @@ public class SAP {
 		this.G = g.reverse().reverse();
 		DepthFirstOrder dfs = new DepthFirstOrder(G);
 		postOrder = dfs.post();
-		for (int w : postOrder)
-			System.out.println(w + " ");
+		//for (int w : postOrder)
+			//System.out.println(w + " ");
 	}
 
 	// length of shortest ancestral path between v and w; -1 if no such path
