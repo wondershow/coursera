@@ -15,15 +15,18 @@ public class SAP {
 	public SAP(Digraph g) {
 		this.G = g.reverse().reverse();
 		DepthFirstOrder dfs = new DepthFirstOrder(G);
+		//System.out.println("size is " + G.V());
 		postOrder = dfs.post();
 		//for (int w : postOrder)
-			//System.out.println(w + " ");
+		//	System.out.println(w + " , ");
 	}
 
 	// length of shortest ancestral path between v and w; -1 if no such path
 	public int length(int v, int w) {
 		BreadthFirstDirectedPaths vPaths = new BreadthFirstDirectedPaths(G, v);
 		BreadthFirstDirectedPaths wPaths = new BreadthFirstDirectedPaths(G, w);
+		
+		
 		
 		boolean vScanned = false, wScanned = false;
 		
@@ -35,12 +38,17 @@ public class SAP {
 			int wDist = wPaths.distTo(u);
 			if ( (vDist + wDist) < min) 
 				min = vDist + wDist;
+			/*
 			if (u == v) vScanned = true;
 			if (u == w) wScanned = true;
-			if (vScanned && wScanned) break;
+			if (vScanned && wScanned) break;*/
 		}
 		
 		if (min == Integer.MAX_VALUE) min = -1;
+		/*
+		if (G.V() == 10 && G.E() == 40 && v ==8 && w == 9 && min == 3) {
+			System.out.println (G.toString());
+		}*/
 		return min;
 	}
 
@@ -61,9 +69,10 @@ public class SAP {
 				min = vDist + wDist;
 				res = u;
 			}
+			/*
 			if (u == v) vScanned = true;
 			if (u == w) wScanned = true;
-			if (vScanned && wScanned) break;
+			if (vScanned && wScanned) break;*/
 		}
 		return res;
 	}
@@ -107,10 +116,10 @@ public class SAP {
 			
 			if ( (vDist + wDist) < min)
 				min = vDist + wDist;
-			
+			/*
 			if (vSet.contains(u)) vScanned++;
 			if (wSet.contains(u)) wScanned++;
-			if (vSize == vScanned && wSize == wScanned) break;
+			if (vSize == vScanned && wSize == wScanned) break;*/
 		}
 		
 		if (min == Integer.MAX_VALUE) min = -1;
@@ -144,10 +153,10 @@ public class SAP {
 				min = vDist + wDist;
 				res = u;
 			}
-			
+			/*
 			if (vSet.contains(u)) vScanned++;
 			if (wSet.contains(u)) wScanned++;
-			if (vSize == vScanned && wSize == wScanned) break;
+			if (vSize == vScanned && wSize == wScanned) break;*/
 		}
 		
 		return res;
@@ -155,7 +164,7 @@ public class SAP {
 
 	// do unit testing of this class
 	public static void main(String[] args) {
-		In in = new In(args[0]);
+		In in = new In("wordnet/random.txt");
 	    Digraph G = new Digraph(in);
 	    SAP sap = new SAP(G);
 	    //System.out.println("111");

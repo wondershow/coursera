@@ -10,9 +10,9 @@ public class WordNet {
 	private HashMap<Integer, String> id2NounMap;
 	private HashMap<String, Bag<Integer>> noun2IdMap;
 	private SAP sap;
+	//public SAP sap;
 	private Digraph graph;
 	private int netSize;
-	
 	
 	// constructor takes the name of the two input files
 	public WordNet(String synsets, String hypernyms) {
@@ -21,8 +21,10 @@ public class WordNet {
 		
 		id2NounMap = new HashMap<Integer, String>();
 		noun2IdMap = new HashMap<String, Bag<Integer>>();
-				
+		netSize = 0;
 		constructSysnet(synsets);
+		
+		//System.out.println("netSize = " + netSize);
 		graph = new Digraph(netSize);
 		constructGraph(hypernyms);
 		
@@ -59,7 +61,7 @@ public class WordNet {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	} 
+	}
 	
 	private void constructSysnet(String file) {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -69,7 +71,7 @@ public class WordNet {
 		    	int vertex = Integer.parseInt(fields[0]);
 		    	String[] words = fields[1].trim().split(" ");
 		    	netSize++;
-		    	
+		    	//System.out.println(netSize + ":" + line);
 		    	for (int i = 0; i < words.length; i++) {
 		    		id2NounMap.put(vertex, fields[1]);
 		    		putWord(words[i], vertex);
@@ -123,7 +125,8 @@ public class WordNet {
 
 	// do unit testing of this class
 	public static void main(String[] args) {
- 		
+		WordNet wordnet = new WordNet("wordnet/synsets11.txt", "wordnet/random.txt");
+		System.out.println(wordnet.sap.length(8,9));
  	}
 	
 	//check if a parameter is null
