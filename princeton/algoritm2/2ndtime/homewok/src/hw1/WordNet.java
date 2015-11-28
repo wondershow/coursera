@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.Bag;
+import edu.princeton.cs.algs4.DirectedCycle;
 
 public class WordNet {
 	private HashMap<Integer, String> id2NounMap;
@@ -25,7 +26,25 @@ public class WordNet {
 		graph = new Digraph(netSize);
 		constructGraph(hypernyms);
 		
+		if (!isRootedDAG())
+			throw new java.lang.IllegalArgumentException();
+		
 		sap = new SAP(graph);
+	}
+	
+	
+	private boolean isRootedDAG() {
+		int numberOf0Degree = 0;
+		for (int v = 0; v < graph.V(); v++) {
+			int degree = 0;
+			for (int w : graph.adj(v))
+				degree++;
+			if (degree == 0) numberOf0Degree++;
+		}
+		if (numberOf0Degree != 1) return false;
+		DirectedCycle dc = new DirectedCycle(graph);
+		return !dc.hasCycle();
+		
 	}
 	
 	private void constructGraph(String file) {
@@ -86,6 +105,8 @@ public class WordNet {
 	public int distance(String nounA, String nounB) {
 		nullChecker(nounA);
 		nullChecker(nounB);
+		if (!noun2IdMap.containsKey(nounA) || !noun2IdMap.containsKey(nounB))
+			throw new java.lang.IllegalArgumentException();
 		return sap.length(noun2IdMap.get(nounA), noun2IdMap.get(nounB));
  	}
 
@@ -94,6 +115,8 @@ public class WordNet {
 	public String sap(String nounA, String nounB) {
 		nullChecker(nounA);
 		nullChecker(nounB);
+		if (!noun2IdMap.containsKey(nounA) || !noun2IdMap.containsKey(nounB))
+			throw new java.lang.IllegalArgumentException();
 		int ancester = sap.ancestor(noun2IdMap.get(nounA), noun2IdMap.get(nounB));
 		return id2NounMap.get(ancester);
  	}
