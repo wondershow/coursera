@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.Picture;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class SeamCarver {
@@ -30,18 +31,35 @@ public class SeamCarver {
 		
 		System.out.println(" Pwidth = " + Pwidth + ", Pheight = " + Pheight);
 		
+		
 		for (int i = 0; i < P.height(); i++) {
 			for (int j = 0; j < P.width(); j++) {
 				mattrixR[i][j] = P.get(j, i).getRed();
 				mattrixG[i][j] = P.get(j, i).getGreen();
 				mattrixB[i][j] = P.get(j, i).getBlue();
-				System.out.print("(" + mattrixR[i][j] +","+ mattrixG[i][j] +","+ mattrixB[i][j] +","     + ") ");
-				
+				//System.out.print("(" + mattrixR[i][j] +","+ mattrixG[i][j] +","+ mattrixB[i][j] +","     + ") ");
+				energyM[i][j] = energy(j, i);
+				//StdOut.printf("%8.0f ", energyM[i][j]);
+				//StdOut.printf("%8.0f ", energy(j, i));
 			}
 			System.out.println();
 		}
 		
-		transpose();
+		
+		for (int i = 0; i < P.height(); i++) {
+			for (int j = 0; j < P.width(); j++) {
+				//System.out.print("(" + mattrixR[i][j] +","+ mattrixG[i][j] +","+ mattrixB[i][j] +","     + ") ");
+				energyM[i][j] = energy(j, i);
+				//StdOut.printf("%8.0f ", energyM[i][j]);
+				StdOut.printf("%8.0f ", energy(j, i));
+			}
+			System.out.println();
+		}
+		
+		
+		
+		System.out.println("\n energyM");
+		//transpose();
 	}
 	
 	public Picture picture()  {                        // current picture
@@ -60,11 +78,11 @@ public class SeamCarver {
 	 * Col x  
 	 * Row y
 	 ***/
-	public double energy(int x, int y) {            // energy of pixel at column x and row y
-		if (!checkImgBoundary(x, y)) throw new java.lang.IndexOutOfBoundsException();
-		if (x == 0 || y == 0 || x == P.width() - 1 || y == P.height() - 1)
+	public double energy(int col, int row) {            // energy of pixel at column x and row y
+		if (!checkImgBoundary(col, row)) throw new java.lang.IndexOutOfBoundsException();
+		if (col == 0 || row == 0 || col == P.width() - 1 || row == P.height() - 1)
 			return BOUNDARY_ENERGY;
-		double res = Math.sqrt( deltaX(x, y) + deltaY(x, y));
+		double res = Math.sqrt( deltaX(col, row) + deltaY(col, row));
 		/*
 		if (x == 1 && y == 1)
 			System.out.println("energy = " + res);*/
@@ -72,24 +90,32 @@ public class SeamCarver {
 	}	
 	
 	public int[] findHorizontalSeam()  {             // sequence of indices for horizontal seam
-		return new int[1];
+		if (!transposed) transpose();
+		return findVerticalSeam();
 	}
 	
-	public int[] findVerticalSeam() {             // sequence of indices for vertical seam
+	public int[] findVerticalSeam() {         // sequence of indices for vertical seam
+		//if (transposed) transpose();
+		
 		double[] distTo = new double[dagSize()];
 		int[] vertexTo = new int[dagSize()];
 		int source = dagSourceIndex();
-		System.out.println("source = " + source);
+		//System.out.println("source = " + source);
 		
-		for (int v = 0; v < dagSize() - 1; v++)
+		for (int v = 0; v < dagSize(); v++) {
 			distTo[v] = Double.POSITIVE_INFINITY;
+			vertexTo[v] = -1;
+		}
 		
 		distTo[source] = 0.0;
 		vertexTo[source] = source;
 		
 		Iterable<Integer> topoOrder = this.topologicalOrder();
 		
-		for (int v : topoOrder) 
+		for (int v : topoOrder)
+			System.out.println(v);
+		
+		for (int v : topoOrder)
 			relax(v, distTo, vertexTo);
 		
 		int[] res = new int[this.Pheight];
@@ -113,6 +139,8 @@ public class SeamCarver {
 	 * */
 	private void relax(int v, double[] distTo, int[] vTo) {
 		int[] vPointTos = this.getDescendants(v);// the next level neighbors of this vertex
+		if (vPointTos == null) return; // v is the sink
+		if (v == 0) System.out.println("test"); 
 		System.out.println("v from is " + v);
 		for (int i = 0; i < vPointTos.length; i++) {
 			double edgeWeight = getEdgeWeight(v, vPointTos[i]);
@@ -128,12 +156,16 @@ public class SeamCarver {
 		if (P.width() <= 1) throw new java.lang.IllegalArgumentException();
 		if (seam.length != P.width()) throw new java.lang.IllegalArgumentException();
 		//if (!checkImgBoundary())
+		
 	}
 	
 	public void removeVerticalSeam(int[] seam){     // remove vertical seam from current picture
 		checkNull(seam);
 		if (P.height() <= 1) throw new java.lang.IllegalArgumentException();
 		if (seam.length != P.height()) throw new java.lang.IllegalArgumentException(); 
+		
+		
+		
 		
 	}
 	
@@ -216,6 +248,11 @@ public class SeamCarver {
 				energyM[i][j] = energyM[j][i];
 				energyM[j][i] = tmpd;
 			}
+		
+		int tmp = Pheight;
+		Pheight = Pwidth;
+		Pwidth = tmp;
+		
 		transposed = !transposed;
 	}
 	
@@ -242,6 +279,9 @@ public class SeamCarver {
 			res = new int[this.Pwidth];
 			for (int j = 0; j < this.Pwidth; j++)
 				res[j] = XY2Index(j, 0);
+			return res;
+		} else if (i == dagSinkIndex()) {
+			res = null;
 			return res;
 		}
 		
