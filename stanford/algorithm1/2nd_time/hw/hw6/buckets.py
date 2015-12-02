@@ -1,28 +1,38 @@
 #from __future__ import division
+import time
 class bucket(object):
     def __init__(self, v):
-        self.arrayMaps = [None] * 20001
+        
         self.inputmin = 100000;
         self.inputmax = -100000;
+        self.resultDict = {}
+        self.arrayDict = {}
         with open(v) as lines:
              for line in lines:
                  n = int(line)
                  if n > self.inputmax:
                      self.inputmax = n
                  if n < self.inputmin:
-                     self.inputmin = n;
-                 self.insert(getBucket(n) , n)
+                     self.inputmin = n
+        
+        bucketmax = self.getBucket(self.inputmax)
+        bucketmin = self.getBucket(self.inputmin)
+        
+        with open(v) as lines:
+             for line in lines:
+                 n = int(line)
+                 self.insert(self.getBucket(n) , n)
+        self.count()
     
     def insert(self, bucket, number):
-        if self.arrayMaps[bucket] is None:
-            self.arrayMaps[bucket] = {};
-        if self.arrayMaps[bucket].contains(number):
-            count = self.arrayMaps[bucket][number]
-            self.arrayMaps[bucket][number] = count + 1
+        #print "buckt is" + str(bucket)
+        if self.arrayDict.has_key(bucket) is False:
+            self.arrayDict[bucket] = {};
+        if self.arrayDict[bucket].has_key(number):
+            count = self.arrayDict[bucket][number]
+            self.arrayDict[bucket][number] = count + 1
         else:
-            self.arrayMaps[bucket][number] = 1;
-            
-        
+            self.arrayDict[bucket][number] = 1;
      
     ''' 
     bucket of numbers 
@@ -48,14 +58,15 @@ class bucket(object):
             res = -1 * (number / 10000) - 1;
             if res == -2 and number == 10000:
                 res = 1
+        return res
     
     def getFreq(self, number):
         bucket = self.getBucket(number)
         res = 0;
-        if self.arrayMaps[bucket] is None:
+        if not self.arrayDict.has_key(bucket):
             res = 0
-        elif self.arrayMaps[bucket].contains(number):
-            res = self.arrayMaps[bucket][number]
+        elif self.arrayDict[bucket].has_key(number):
+            res = self.arrayDict[bucket][number]
         else:
             res = 0;
             
@@ -64,14 +75,34 @@ class bucket(object):
     def count(self):
         res = 0;
         bucketmax = self.getBucket(self.inputmax)
-        for bucket in [-1, 0]:
-            for number in self.arrayMaps[bucket].keys():
-                for sum in range(-10000, 100001):
-                    gap = number 
+        bucketmin = self.getBucket(self.inputmin)
+        
+        sumarray = set(range(-10000,10001))
+        
+        print "set size is " + str(len(sumarray))
+        
+        for bucket in self.arrayDict.keys() :
+            #print "bucket is " + str(bucket)
+            if self.arrayDict.has_key(bucket) is False:
+                continue
             
-        
-        
-        
-          
+            for number in self.arrayDict[bucket].keys():
+                a1Freq = self.getFreq(number)
+                removeset = set();
+                for sum in sumarray:
+                    a2 = sum - number
+                    a2Freq = self.getFreq(a2)
+                    if a2Freq != 0:
+                        removeset.add(sum)
+                sumarray = sumarray -   removeset   
+                #if   len(sumarray) 
+                if len(sumarray) % 100 == 0:
+                    print "set size is " + str(len(sumarray))
+        res = len(len(sumarray))
+        print "res is " + str(res)
+        return res
 
-
+start = time.time()
+test = bucket("2sums.txt")
+end = time.time()
+print end - start
