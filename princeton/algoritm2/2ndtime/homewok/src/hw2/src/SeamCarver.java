@@ -1,14 +1,21 @@
 import edu.princeton.cs.algs4.Picture;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
+
+import java.awt.Color;
+
 import edu.princeton.cs.algs4.IndexMinPQ;
 
 public class SeamCarver {
 	private final int BOUNDARY_ENERGY = 1000;
 	private boolean transposed = false;
+	
+	
 	private int[][] mattrixR;
 	private int[][] mattrixG;
 	private int[][] mattrixB;
+	
+	
 	private double[][] energyM;
 	private int Pwidth, Pheight;
 	private final Picture P;
@@ -21,15 +28,18 @@ public class SeamCarver {
 	public SeamCarver(Picture picture) {               // create a seam carver object based on the given picture
 		checkNull(picture);
 		P = picture;
-		int dim = Math.max(P.width(), P.height());
-		mattrixR = new int[dim][dim];
-		mattrixG = new int[dim][dim];
-		mattrixB = new int[dim][dim];
-		energyM = new double[dim][dim];
+		//int dim = Math.max(P.width(), P.height());
+		
+		mattrixR = new int[P.height()][P.width()];
+		mattrixG = new int[P.height()][P.width()];
+		mattrixB = new int[P.height()][P.width()];
+		
+		energyM = new double[P.height()][P.width()];
+		
 		Pwidth = P.width();
 		Pheight = P.height();
 		
-		System.out.println(" Pwidth = " + Pwidth + ", Pheight = " + Pheight);
+		//System.out.println(" Pwidth = " + Pwidth + ", Pheight = " + Pheight);
 		
 		
 		for (int i = 0; i < P.height(); i++) {
@@ -37,66 +47,92 @@ public class SeamCarver {
 				mattrixR[i][j] = P.get(j, i).getRed();
 				mattrixG[i][j] = P.get(j, i).getGreen();
 				mattrixB[i][j] = P.get(j, i).getBlue();
+				
 				//System.out.print("(" + mattrixR[i][j] +","+ mattrixG[i][j] +","+ mattrixB[i][j] +","     + ") ");
-				energyM[i][j] = energy(j, i);
-				//StdOut.printf("%8.0f ", energyM[i][j]);
 				//StdOut.printf("%8.0f ", energy(j, i));
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		
 		
 		for (int i = 0; i < P.height(); i++) {
 			for (int j = 0; j < P.width(); j++) {
 				//System.out.print("(" + mattrixR[i][j] +","+ mattrixG[i][j] +","+ mattrixB[i][j] +","     + ") ");
-				energyM[i][j] = energy(j, i);
+				energyM[i][j] = calEnergy(j, i);
 				//StdOut.printf("%8.0f ", energyM[i][j]);
-				StdOut.printf("%8.0f ", energy(j, i));
+				//StdOut.printf("%8.0f ", energy(j, i));
 			}
-			System.out.println();
 		}
+	
 		
 		
-		
-		System.out.println("\n energyM");
+		//System.out.println("\n energyM");
 		//transpose();
 	}
 	
 	public Picture picture()  {                        // current picture
-		return P;
+		Picture res;
+		if (this.transposed) 
+			res = new Picture(this.Pheight, this.Pwidth);
+		else 
+			res = new Picture(this.Pwidth, this.Pheight);
+		
+		for (int i = 0; i<this.Pheight; i++)
+			for (int j = 0; j < this.Pwidth; j++)
+				if (this.transposed) 
+					res.set(i, j, new Color(this.mattrixR[i][j], this.mattrixG[i][j], this.mattrixB[i][j] ));
+				else 
+					res.set(j, i, new Color(this.mattrixR[i][j], this.mattrixG[i][j], this.mattrixB[i][j] ));
+		return res;
 	}
 	
-	public int width() {                        // width of current picture
-		return P.width();
+	public int width() { // width of current picture
+		if (this.transposed) return this.Pheight;
+		return this.Pwidth;
 	}
 	
-	public	int height() {                        // height of current picture
-		return P.height();
+	public	int height() { // height of current picture
+		if (this.transposed) return this.Pwidth;
+		return this.Pheight;
 	}
 	
-	/***
-	 * Col x  
-	 * Row y
-	 ***/
-	public double energy(int col, int row) {            // energy of pixel at column x and row y
-		if (!checkImgBoundary(col, row)) throw new java.lang.IndexOutOfBoundsException();
-		if (col == 0 || row == 0 || col == P.width() - 1 || row == P.height() - 1)
+	
+	private double calEnergy(int col, int row) {
+		if (!checkImgBoundary(col, row)) 
+			throw new java.lang.IndexOutOfBoundsException("col is " + col + ", row is " + row);
+		if (col == 0 || row == 0 || col == this.Pwidth - 1 || row == this.Pheight - 1)
 			return BOUNDARY_ENERGY;
 		double res = Math.sqrt( deltaX(col, row) + deltaY(col, row));
 		/*
 		if (x == 1 && y == 1)
 			System.out.println("energy = " + res);*/
 		return res;
+	}
+	
+	/***
+	 * Col x  
+	 * Row y
+	 ***/
+	public double energy(int col, int row) {           // energy of pixel at column x and row y
+		if (this.transposed) { //switch row and col if transposed;
+			int tmp = col;
+			col = row;
+			row = tmp;
+		}
+		return calEnergy(col, row);
 	}	
 	
 	public int[] findHorizontalSeam()  {             // sequence of indices for horizontal seam
 		if (!transposed) transpose();
-		return findVerticalSeam();
+		//System.out.println("Pwidth = " + this.Pwidth + ", Pheight = " + this.Pheight);
+		//int res[] = getVerticalSeam();
+		return getVerticalSeam();
 	}
 	
-	public int[] findVerticalSeam() {         // sequence of indices for vertical seam
+	
+	
+	private int[] getVerticalSeam() {
 		//if (transposed) transpose();
-		
 		double[] distTo = new double[dagSize()];
 		int[] vertexTo = new int[dagSize()];
 		int source = dagSourceIndex();
@@ -111,9 +147,9 @@ public class SeamCarver {
 		vertexTo[source] = source;
 		
 		Iterable<Integer> topoOrder = this.topologicalOrder();
-		
+		/*
 		for (int v : topoOrder)
-			System.out.println(v);
+			System.out.println(v);*/
 		
 		for (int v : topoOrder)
 			relax(v, distTo, vertexTo);
@@ -127,11 +163,18 @@ public class SeamCarver {
 			res[i] = xy[0]; //
 			v = vertexTo[v];
 		}
-		
-		
+		/*
 		for (int i = 0; i < res.length; i++)
-			System.out.println(i + ":" + res[i]);
+			System.out.println(i + ":" + res[i]);*/
+		
+		//this.printEneryMatrix("for vertical energy");
+		//this.printRGBMatrix("for vertical RGB");
 		return res;
+	}
+	
+	public int[] findVerticalSeam() {         // sequence of indices for vertical seam
+		if (transposed) transpose();
+		return getVerticalSeam();
 	}
 	
 	/**
@@ -140,8 +183,11 @@ public class SeamCarver {
 	private void relax(int v, double[] distTo, int[] vTo) {
 		int[] vPointTos = this.getDescendants(v);// the next level neighbors of this vertex
 		if (vPointTos == null) return; // v is the sink
-		if (v == 0) System.out.println("test"); 
-		System.out.println("v from is " + v);
+		
+		/*System.out.print("descendants of " + v + " : ");
+		for (int i = 0; i < vPointTos.length; i++) 
+			System.out.print(vPointTos[i] + ",");
+		System.out.println();*/
 		for (int i = 0; i < vPointTos.length; i++) {
 			double edgeWeight = getEdgeWeight(v, vPointTos[i]);
 			if ( distTo[vPointTos[i]] > distTo[v] +  edgeWeight) {
@@ -153,20 +199,79 @@ public class SeamCarver {
 	
 	public void removeHorizontalSeam(int[] seam){  // remove horizontal seam from current picture
 		checkNull(seam);
-		if (P.width() <= 1) throw new java.lang.IllegalArgumentException();
-		if (seam.length != P.width()) throw new java.lang.IllegalArgumentException();
-		//if (!checkImgBoundary())
 		
+		if (!this.transposed) {
+			if (this.Pheight <= 1) throw new java.lang.IllegalArgumentException();
+			if (seam.length != this.Pwidth) throw new java.lang.IllegalArgumentException();
+		} else {
+			if (this.Pwidth <= 1) throw new java.lang.IllegalArgumentException();
+			if (seam.length != this.Pheight) throw new java.lang.IllegalArgumentException();
+		}
+		if (!validateSeam(seam)) throw new java.lang.IllegalArgumentException(); 
+		if (!transposed) transpose();
+		delVerticalSeam(seam);
+		//this.printEneryMatrix("after removeHorizontalSeam");
 	}
 	
+	private void delVerticalSeam(int[] seam) {
+		double[][] newEnergyM = new double[this.Pheight][this.Pwidth];
+		int[][] newMatrrixR = new int[this.Pheight][this.Pwidth];
+		int[][] newMatrrixG = new int[this.Pheight][this.Pwidth];
+		int[][] newMatrrixB = new int[this.Pheight][this.Pwidth];
+		
+		for (int i = 0; i < seam.length; i++) {
+			if (seam[i] > 0) {
+				System.arraycopy(this.energyM[i], 0, newEnergyM[i], 0, seam[i]);
+				System.arraycopy(this.mattrixR[i], 0, newMatrrixR[i], 0, seam[i]);
+				System.arraycopy(this.mattrixG[i], 0, newMatrrixG[i], 0, seam[i]);
+				System.arraycopy(this.mattrixB[i], 0, newMatrrixB[i], 0, seam[i]);
+			}
+			if (seam[i] < this.Pwidth - 1) {
+				System.arraycopy(this.energyM[i], seam[i] + 1, newEnergyM[i], seam[i], this.Pwidth - seam[i] - 1);
+				System.arraycopy(this.mattrixR[i], seam[i] + 1, newMatrrixR[i], seam[i], this.Pwidth - seam[i] - 1);
+				System.arraycopy(this.mattrixG[i], seam[i] + 1, newMatrrixG[i], seam[i], this.Pwidth - seam[i] - 1);
+				System.arraycopy(this.mattrixB[i], seam[i] + 1, newMatrrixB[i], seam[i], this.Pwidth - seam[i] - 1);
+			}
+		}
+		
+		this.energyM = newEnergyM;
+		this.mattrixR = newMatrrixR;
+		this.mattrixG = newMatrrixG;
+		this.mattrixB = newMatrrixB;
+		
+		this.Pwidth--;
+		
+		//update Energy mattrix;
+		for (int i = 1; i < this.Pheight - 1; i++) {
+			if (seam[i] < this.Pwidth)
+				this.energyM[i][seam[i]] = this.calEnergy(seam[i], i);
+			//System.out.println("updating  " + i + "row" + "" )
+			
+			if (seam[i] >= 1)
+				this.energyM[i][seam[i] - 1] = this.calEnergy(seam[i] - 1, i);
+			/*
+			if (seam[i] < this.Pwidth - 2)
+				this.energyM[i][seam[i] + 1] = this.energy(seam[i] + 1, i);*/
+		} //*/
+		//this.printEneryMatrix("after removeVerticalSeam, Pheight " + this.Pheight + ", Pwidth = " + this.Pwidth);
+	}
+	
+	
+	
 	public void removeVerticalSeam(int[] seam){     // remove vertical seam from current picture
+		if (this.transposed) this.transpose();
 		checkNull(seam);
-		if (P.height() <= 1) throw new java.lang.IllegalArgumentException();
-		if (seam.length != P.height()) throw new java.lang.IllegalArgumentException(); 
+		//if (this.transposed) transpose();
+		if (this.Pwidth <= 1) throw new java.lang.IllegalArgumentException();
+		if (seam.length != this.Pheight) throw new java.lang.IllegalArgumentException(); 
+		if (!validateSeam(seam)) throw new java.lang.IllegalArgumentException(); 
 		
-		
-		
-		
+		delVerticalSeam(seam);
+		/*
+		String tmpStr = "";
+		for (int i=0; i<seam.length; i++)
+			tmpStr += seam[i] + " ";
+		System.out.println("seams are : " + tmpStr);*/
 	}
 	
 	private void checkNull(Object o) {
@@ -174,7 +279,7 @@ public class SeamCarver {
 	}
 	
 	private boolean checkImgBoundary(int col, int row) {
-		if (col < 0 || col > P.width() - 1 || row < 0 || row > P.height() -1)
+		if (col < 0 || col > this.Pwidth - 1 || row < 0 || row > this.Pheight -1)
 			return false;
 		return true;
 	}
@@ -182,21 +287,18 @@ public class SeamCarver {
 	//return the square of deltaX
 	private int deltaX(int col, int row) {
 		int res = 0;
-		if (transposed) {
-			res += (mattrixR[col][row - 1] - mattrixR[col] [row + 1])
-					* (mattrixR[col][row - 1] - mattrixR[col] [row + 1]);
-			res += (mattrixG[col][row - 1] - mattrixG[col] [row + 1])
-					* (mattrixG[col][row - 1] - mattrixG[col] [row + 1]);
-			res += (mattrixB[col][row - 1] - mattrixB[col] [row + 1])
-					* (mattrixB[col][row - 1] - mattrixB[col] [row + 1]);
-		} else {
-			res += (mattrixR[row - 1][col] - mattrixR[row + 1] [col])
-					* (mattrixR[row - 1][col] - mattrixR[row + 1] [col]);
-			res += (mattrixG[row - 1][col] - mattrixG[row + 1] [col])
-					* (mattrixG[row - 1][col] - mattrixG[row + 1] [col]);
-			res += (mattrixB[row - 1][col] - mattrixB[row + 1] [col])
-					* (mattrixB[row - 1][col] - mattrixB[row + 1] [col]);
-		}
+		
+		
+		
+		res += (mattrixR[row][col - 1] - mattrixR[row][col + 1])
+				* (mattrixR[row][col - 1] - mattrixR[row][col + 1]);
+		
+		res += (mattrixG[row][col - 1] - mattrixG[row][col + 1])
+				* (mattrixG[row][col - 1] - mattrixG[row][col + 1]);
+		
+		res += (mattrixB[row][col - 1] - mattrixB[row][col + 1])
+				* (mattrixB[row][col - 1] - mattrixB[row][col + 1]);
+		
 		/*
 		if (col == 1 && row == 1)
 			System.out.println("X :" + res);*/
@@ -206,56 +308,47 @@ public class SeamCarver {
 	//return the square of deltaY
 	private int deltaY(int col, int row) {
 		int res = 0;
-		if (transposed) {
-			res += (mattrixR[col - 1][row] - mattrixR[col + 1][row])
-					* (mattrixR[col - 1][row] - mattrixR[col + 1][row]);
-			res += (mattrixG[col - 1][row] - mattrixG[col + 1][row])
-					* (mattrixG[col - 1][row] - mattrixG[col + 1][row]);
-			res += (mattrixB[col - 1][row] - mattrixB[col + 1][row])
-					* (mattrixB[col - 1][row] - mattrixB[col + 1][row]);
-			
-		} else {
-			res += (mattrixR[row][col - 1] - mattrixR[row][col + 1])
-					* (mattrixR[row][col - 1] - mattrixR[row][col + 1]);
-			res += (mattrixG[row][col - 1] - mattrixG[row][col + 1])
-					* (mattrixG[row][col - 1] - mattrixG[row][col + 1]);
-			res += (mattrixB[row][col - 1] - mattrixB[row][col + 1])
-					* (mattrixB[row][col - 1] - mattrixB[row][col + 1]);
-		}
+		res += (mattrixR[row - 1][col] - mattrixR[row + 1] [col])
+				* (mattrixR[row - 1][col] - mattrixR[row + 1] [col]);
+		res += (mattrixG[row - 1][col] - mattrixG[row + 1] [col])
+				* (mattrixG[row - 1][col] - mattrixG[row + 1] [col]);
+		res += (mattrixB[row - 1][col] - mattrixB[row + 1] [col])
+				* (mattrixB[row - 1][col] - mattrixB[row + 1] [col]);
 		/*
 		if (col == 1 && row == 1)
-			System.out.println("Y :" + res);*/
+			System.out.println("Y :" + res + "," + (mattrixR[row][col - 1] - mattrixR[row][col + 1]) 
+					+ "," + (mattrixG[row][col - 1] - mattrixG[row][col + 1]) + ","
+					+ (mattrixB[row][col - 1] - mattrixB[row][col + 1]));*/
 		return res;
 	}
 	
 	private void transpose() {
-		int dim = Math.max(Pwidth, Pheight);
-		for (int i = 0; i < dim; i ++)
-			for (int j = i + 1; j < dim; j++) {
-				int tmp = mattrixR[i][j];
-				mattrixR[i][j] = mattrixR[j][i];
-				mattrixR[j][i] = tmp;
-				
-				tmp = mattrixG[i][j];
-				mattrixG[i][j] = mattrixG[j][i];
-				mattrixG[j][i] = tmp;
-				
-				tmp = mattrixB[i][j];
-				mattrixB[i][j] = mattrixB[j][i];
-				mattrixB[j][i] = tmp;
-				
-				double tmpd = energyM[i][j];
-				energyM[i][j] = energyM[j][i];
-				energyM[j][i] = tmpd;
+		
+		int[][] mattrixRTranspose = new int[Pwidth][Pheight];
+		int[][] mattrixGTranspose = new int[Pwidth][Pheight];
+		int[][] mattrixBTranspose = new int[Pwidth][Pheight];
+		double[][] energyMTranspose = new double[Pwidth][Pheight];
+		
+		
+		for (int i = 0; i < Pheight; i ++)
+			for (int j = 0; j < Pwidth; j++) {
+				mattrixRTranspose[j][i] = this.mattrixR[i][j];
+				mattrixGTranspose[j][i] = this.mattrixG[i][j];
+				mattrixBTranspose[j][i] = this.mattrixB[i][j];
+				energyMTranspose[j][i] = this.energyM[i][j];
 			}
 		
 		int tmp = Pheight;
 		Pheight = Pwidth;
 		Pwidth = tmp;
 		
+		this.mattrixR = mattrixRTranspose;
+		this.mattrixG = mattrixGTranspose;
+		this.mattrixB = mattrixBTranspose;
+		this.energyM = energyMTranspose;
+		
 		transposed = !transposed;
 	}
-	
 	
 	//To transfrom the element on row, col to 
 	//a one-dimension value which is used in a digraph
@@ -280,7 +373,7 @@ public class SeamCarver {
 			for (int j = 0; j < this.Pwidth; j++)
 				res[j] = XY2Index(j, 0);
 			return res;
-		} else if (i == dagSinkIndex()) {
+		} else if (i == dagSinkIndex()) { // the virtual sink
 			res = null;
 			return res;
 		}
@@ -293,6 +386,9 @@ public class SeamCarver {
 			// last row return the virtual sink
 			res = new int[1];
 			res[0] = dagSinkIndex();
+		} else if (col == this.Pwidth - 1 && col == 0) { // only one column
+			res = new int[1];
+			res[0] = XY2Index(col, row + 1);
 		} else if (col == 0) { // left most column
 			res = new int[2];
 			res[0] = XY2Index(col, row + 1);
@@ -331,18 +427,40 @@ public class SeamCarver {
 	
 	//get the arc weight from v to w
 	private double getEdgeWeight(int v, int w) {
-		System.out.println("w = " + w);
+		//System.out.println("w = " + w + ", v is " + v + ", from v to w");
 		if (v == dagSourceIndex()) return this.BOUNDARY_ENERGY;
 		if (w == dagSinkIndex()) return 0;
 		int[] xy = this.index2XY(w);
+		//System.out.println(xy[0] + "," + xy[1]);
 		return this.energyM[xy[1]][xy[0]];
 	}
+	
+	private void printEneryMatrix(String s) {
+		System.out.println(s);
+		for (int i = 0; i < Pheight; i++) {
+			for (int j = 0; j < Pwidth; j++) {
+				StdOut.printf("%8.0f ",energyM[i][j]);
+			}
+			System.out.println("");
+		}
+	}
+	
+	private void printRGBMatrix(String s) {
+		System.out.println(s);
+		for (int i = 0; i < Pheight; i++) {
+			for (int j = 0; j < Pwidth; j++) {
+				StdOut.printf("(%4d,%4d,%4d) ", this.mattrixR[i][j], this.mattrixG[i][j], this.mattrixB[i][j]);
+				//System.out.print("("+this.mattrixR[i][j] + "," + this.mattrixG[i][j] + "," + this.mattrixB[i][j] + ")");
+			}
+			System.out.println("");
+		}
+	}
+	
+	private boolean validateSeam(int[] seam) {
+		for (int i = 0; i< seam.length; i++) {
+			if (seam[i] < 0 || seam[i] >= this.Pwidth) return false;
+			if (i>0 && Math.abs(seam[i] - seam[i-1]) > 1) return false;
+		}
+		return true;
+	}
 }
-
-/*
-class MyAcyclicSP {
-	
-	private 
-	
-	
-}*/
