@@ -7,13 +7,14 @@ public class BoggleSolver
 {
 	private Dictionary dict;
 	
-	boolean[][] calculated;
-	int[][] neighbors;
+	private boolean[][] calculated;
+	private int[][] neighbors;
 	
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary) {
-    	dict = new TreeSetDict();
+    	//dict = new TreeSetDict();
+    	dict = new TSTDict();
     	for (int i = 0; i < dictionary.length; i++) 
     		if (dictionary[i].length() > 2) dict.put(dictionary[i]);
     }
@@ -47,11 +48,11 @@ public class BoggleSolver
     }
     
     public static void main(String[] args) {
-    	In in = new In("/Users/leizhang/coursera/princeton/algoritm2/2ndtime/homewok/src/hw4/src/hw4/boggle/dictionary-16q.txt");
+    	In in = new In("/Users/leizhang/coursera/princeton/algoritm2/2ndtime/homewok/src/hw4/src/boggle/dictionary-16q.txt");
         String[] dictionary = in.readAllStrings();
         BoggleSolver solver = new BoggleSolver(dictionary);
         
-        BoggleBoard board = new BoggleBoard("/Users/leizhang/coursera/princeton/algoritm2/2ndtime/homewok/src/hw4/src/hw4/boggle/board-16q.txt");
+        BoggleBoard board = new BoggleBoard("/Users/leizhang/coursera/princeton/algoritm2/2ndtime/homewok/src/hw4/src/boggle/board-16q.txt");
         
        // System.out.println(board.getLetter(0, 0));
        // System.out.println(board.getLetter(2, 2));
@@ -73,7 +74,7 @@ public class BoggleSolver
     	prefix = prefix + board.getLetter(i, j);
 //    	prefix = prefix.replaceFirst("Q", "QU");
 //    	System.out.println(prefix);
-    	String replaced = prefix.replaceFirst("Q", "QU");
+    	String replaced = prefix.replaceAll("Q", "QU");
     	if (!this.dict.hasPrefix(replaced)) return;
     	if (this.dict.contains(replaced)) res.add(replaced);
     	checked[i][j] = true;
