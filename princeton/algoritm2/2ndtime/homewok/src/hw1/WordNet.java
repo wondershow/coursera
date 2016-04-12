@@ -46,7 +46,6 @@ public class WordNet {
 		if (numberOf0Degree != 1) return false;
 		DirectedCycle dc = new DirectedCycle(graph);
 		return !dc.hasCycle();
-		
 	}
 	
 	private void constructGraph(String file) {

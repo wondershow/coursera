@@ -26,12 +26,12 @@ public class CircularSuffixArray {
     	quickSort(cirStrArr, 0, cirStrArr.length - 1, 0);
     	
     	
-    	/*
+    	
     	for (int i = 0; i < cirStrArr.length; i++)
     		System.out.println(index(i));
     	
     	for (int i = 0; i < cirStrArr.length; i++)
-    		System.out.println(cirStrArr[i]);*/
+    		System.out.println(cirStrArr[i]);
     	
     	//sort();
     }
@@ -46,9 +46,8 @@ public class CircularSuffixArray {
     }
     
     public static void main(String[] args) {// unit testing of the methods (optional)
+    	
     	CircularSuffixArray cs = new CircularSuffixArray("ABRACADABRA!");
-    	
-    	
     }
     
     
