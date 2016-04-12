@@ -46,14 +46,12 @@ public class NonRecursionDFS {
 	}
 	
 	public static void main(String[] args) {
-		Graph p = new Graph(new In("/Users/leizhang/Documents/workspace/Princeton/src/ch4/TinyCG.txt"));
+		Graph p = new Graph(new In("./src/class1/practice/files/TinyDG.txt"));
 		
-		DepthFirstPaths dfo = new DepthFirstPaths(p, 0);
+		DepthFirstPaths dfs = new DepthFirstPaths(p, 0);
+		NonRecursionDFS nrdfs = new NonRecursionDFS(p,0);
 		
-		p = new Graph(new In("/Users/leizhang/Documents/workspace/Princeton/src/ch4/TinyCG.txt"));
-		NonRecursionDFS s = new NonRecursionDFS(p,0);
-		
-		NonrecursiveDFS m = new NonrecursiveDFS(p,0);
+	
 		
 	}
 }
