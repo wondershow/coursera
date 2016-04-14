@@ -133,23 +133,20 @@ public class BaseballElimination {
 		int judgeTeam = teamId(team);
 		if (simpleCheck(judgeTeam)!=null) return Arrays.asList(simpleCheck(judgeTeam));
 		//ArrayList<String> teams; 
+		maxFlowValue = 0;
 		tryElimination(judgeTeam);
 		
-		if ( (int)ff.value() < (int) maxFlowValue) {
-			ArrayList<String> teams = new ArrayList<String>();
-			for (int i = 0; i < teamN; i++)
-				
-				if (ff.inCut(i)) {
-					if (judgeTeam != i)
-					//int inCutTeamId = i < judgeTeam? i : i+1;
-					teams.add(teamName(i));
-				}
-			//if (teams.size() == 0) return null;
-			return teams;
-		} else {
-			//teams = null;
-			return null;
-		} 
+		
+		if (Math.round(ff.value()) == Math.round(maxFlowValue)) return null;
+		ArrayList<String> teams = new ArrayList<String>();
+		for (int i = 0; i < teamN; i++)
+			if (ff.inCut(i)) {
+				if (judgeTeam != i)
+				//int inCutTeamId = i < judgeTeam? i : i+1;
+				teams.add(teamName(i));
+			}
+		if (teams.size() == 0) return null;
+		return teams;
 	}
 	
 	// reutrn -1 if a team name does not exist
