@@ -18,7 +18,7 @@ public class TrieST<Value>
 			
 	}
 	
-	void put(String key, Value value) 
+	public void put(String key, Value value) 
 	{
 		root = put(root, key, value, 0);
 	}
@@ -35,7 +35,7 @@ public class TrieST<Value>
 		return x;
 	}
 	
-	Value get(String key) 
+	public Value get(String key) 
 	{
 		Node x = get(root, key, 0);
 		if (x == null) return null;
@@ -50,7 +50,7 @@ public class TrieST<Value>
 		return get(x.next[c], key, d+1);
 	}
 	
-	void delete(String key) 
+	public void delete(String key) 
 	{
 		delete(root, key, 0);
 	}
@@ -72,19 +72,19 @@ public class TrieST<Value>
 		return null;
 	}
 	
-	boolean contains(String key)
+	public boolean contains(String key)
 	{
 		Node x = get(root, key, 0);
 		if (x == null || x.val == null) return false;
 		return true;
 	}
 	
-	boolean isEmpty()
+	public boolean isEmpty()
 	{
 		return size(root) == 0;
 	}
 	
-	String longestPrefixOf(String s) 
+	public String longestPrefixOf(String s) 
 	{
 		int len = search(root, s, 0, 0);
 		return s.substring(0,len);
@@ -99,14 +99,14 @@ public class TrieST<Value>
 		return search(x.next[c],s, d+1, len);
 	}
 	
-	Iterable<String> keysWithPrefix(String pfx)
+	public Iterable<String> keysWithPrefix(String pfx)
 	{
 		Queue<String> res = new Queue<String>();
 		collect(get(root, pfx, 0), pfx, res);
 		return res;
 	}
 	
-	Iterable<String> keysThatMatch(String s)
+	public Iterable<String> keysThatMatch(String s)
 	{
 		Queue<String> res = new Queue<String>();
 		collect(root, "", s, res);
@@ -122,7 +122,7 @@ public class TrieST<Value>
 		char next = patn.charAt(d);
 		for (char c = 0; c < R; c++)
 			if (next == '.' || next == c)
-				collect(x, pre+c, patn, q );
+				collect(x, pre + c, patn, q);
 	}
 	
 	private void collect(Node x, String prefix, Queue<String> que) 
@@ -133,12 +133,13 @@ public class TrieST<Value>
 			collect(x.next[c], prefix + c, que);
 	} 
 	
-	int size() 
+	public int size() 
 	{
 		return size(root);
 	}
 	
-	private int size(Node x) {
+	private int size(Node x) 
+	{
 		if (x == null) return 0;
 		int mycout = 0;
 		if (x.val != null) mycout++;
@@ -147,7 +148,7 @@ public class TrieST<Value>
 		return mycout;
 	} 
 	
-	Iterable<String> keys()
+	public Iterable<String> keys()
 	{
 		return keysWithPrefix("");
 	}
