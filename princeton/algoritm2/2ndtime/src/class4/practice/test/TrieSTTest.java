@@ -22,8 +22,8 @@ public class TrieSTTest
 		st.put("shells", 3);
 		st.put("by", 4);
 		st.put("the", 5);
-		st.put("sea", 6);
-		st.put("shore", 7);
+		//st.put("sea", 6);
+		st.put("shore", 6);
 		//st.contains(key);
 		return st;
 	}
@@ -38,15 +38,15 @@ public class TrieSTTest
 		Assert.assertEquals(example.get("shells").intValue(),3);
 		Assert.assertEquals(example.get("by").intValue(),4);
 		Assert.assertEquals(example.get("the").intValue(),5);
-		Assert.assertEquals(example.get("sea").intValue(),6);
-		Assert.assertEquals(example.get("shore").intValue(),7);
+		//Assert.assertEquals(example.get("sea").intValue(),6);
+		Assert.assertEquals(example.get("shore").intValue(),6);
 	}
 	
 	@Test
 	public void testSize()
 	{
 		TrieST<Integer> example = intialize();
-		Assert.assertEquals(example.size(), 8);
+		Assert.assertEquals(example.size(), 7);
 	}
 	
 	@Test
@@ -54,8 +54,8 @@ public class TrieSTTest
 	{
 		TrieST<Integer> example = intialize();
 		example.delete("shore");
-		Assert.assertEquals(example.get("shore").intValue(), null);
-		Assert.assertEquals(example.size(), 7);
+		Assert.assertEquals(example.get("shore"), null);
+		Assert.assertEquals(example.size(), 6);
 	}
 	
 	
