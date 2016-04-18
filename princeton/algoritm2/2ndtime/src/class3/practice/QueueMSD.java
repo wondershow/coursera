@@ -30,7 +30,9 @@ public class QueueMSD
 	{
 		if (a==null) throw new java.lang.NullPointerException();
 		int N = a.length;
-		RQueue = (Queue<String> []) (new Object[R+1]);
+		
+		
+		RQueue =  (Queue<String>[]) new Object[R+1];
 		for (int i = 0; i < RQueue.length; i++)
 			RQueue[i] = new Queue<String>();
 	}
