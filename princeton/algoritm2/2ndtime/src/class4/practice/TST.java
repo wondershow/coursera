@@ -79,9 +79,7 @@ public class TST<Value>
 	
 	public boolean contains(String key)
 	{
-		Node x = get(root, key, 0);
-		if (x == null || x.val == null) return false;
-		return true;
+		return get(key) != null;
 	}
 	
 	public boolean isEmpty()
@@ -113,9 +111,9 @@ public class TST<Value>
 	private void collect(Node x, String pre, Queue<String> res) 
 	{
 		if (x == null) return;
-		if (x.val != null) res.enqueue(pre + x.c);
 		collect(x.left, pre, res);
-		collect(x.right, pre, res);
+		if (x.val != null) res.enqueue(pre + x.c);
 		collect(x.mid, pre + x.c, res);
+		collect(x.right, pre, res);
 	}
 }
