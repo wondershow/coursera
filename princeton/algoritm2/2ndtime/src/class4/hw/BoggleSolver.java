@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class BoggleSolver
 {
-	private TreeSetBoggleSolver treeSolver; 
+	private TSTBoggleSolver solver; 
 	public static void main(String[] args)
 	{
 		String path1 = "./src/class4/hw/files/dictionary-algs4.txt";
@@ -27,7 +27,7 @@ public class BoggleSolver
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary)
     {
-    	treeSolver = new TreeSetBoggleSolver(dictionary);
+    	solver = new TSTBoggleSolver(dictionary);
     }
     
     /***
@@ -39,13 +39,13 @@ public class BoggleSolver
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board)
     {
-    	return treeSolver.getAllValidWords(board);
+    	return solver.getAllValidWords(board);
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word)
     {
-    	return treeSolver.scoreOf(word);
+    	return solver.scoreOf(word);
     }
 }
