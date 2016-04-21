@@ -30,6 +30,9 @@ public class TrieSET implements Iterable<String> {
 
     private Node root;      // root of trie
     private int N;          // number of keys in trie
+    
+    private String queryStr;
+    private Node queryCache;
 
     // R-way trie node
     private static class Node {
@@ -64,9 +67,15 @@ public class TrieSET implements Iterable<String> {
     }
     
     public boolean hasPrefixOf(String pre) 
-    {
-    	Node x= search(root, pre, 0); 
+    {	
+    	Node x;
+    	if (queryStr!= null && pre.startsWith(queryStr))
+    		x = search(queryCache, pre, queryStr.length());
+    	else
+    		x = search(root, pre, 0);
     	if (x == null) return false;
+    	queryCache = x;
+    	queryStr = pre;
     	return true;
     }
     
