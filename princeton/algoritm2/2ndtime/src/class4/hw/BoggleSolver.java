@@ -9,7 +9,7 @@ public class BoggleSolver
 	public static void main(String[] args)
 	{
 		String path1 = "./src/class4/hw/files/dictionary-algs4.txt";
-		String path2 = "./src/class4/hw/files/board-q.txt";
+		String path2 = "./src/class4/hw/files/board4x4.txt";
 		In in = new In(path1);
 	    String[] dictionary = in.readAllStrings();
 	    BoggleSolver solver = new BoggleSolver(dictionary);

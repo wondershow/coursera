@@ -65,6 +65,8 @@ import edu.princeton.cs.algs4.StdIn;
 public class TST<Value> {
     private int N;              // size
     private Node<Value> root;   // root of TST
+    private Node<Value> queryCache;
+    private String queryStr;
 
     private static class Node<Value> {
         private char c;                        // character
@@ -76,6 +78,7 @@ public class TST<Value> {
      * Initializes an empty string symbol table.
      */
     public TST() {
+    	queryStr = null;
     }
 
     /**
@@ -112,17 +115,25 @@ public class TST<Value> {
         return x.val;
     }
     
-    
-    
     /**
      * Returns if the trie contains keys prefix with a given string
-     * 
-     * 
      * **/
     public boolean containsPrefixOf(String s) {
     	if (s == null || s.trim().equals("")) return false;
-    	Node x = search(root, s, 0);
+    	Node<Value> x; 
+    	if (queryStr !=null && s.startsWith(queryStr)) 
+    	{
+    		//System.out.println("chaching" + s);
+    		x = search(queryCache, s, queryStr.length()-1);
+    	} 	
+    	else 
+    	{
+    		//System.out.println("restarting" + s);
+    		x = search(root, s, 0);
+    	}
     	if (x == null) return false;
+    	queryCache = x;
+    	queryStr = s;
     	return true;
     }
     

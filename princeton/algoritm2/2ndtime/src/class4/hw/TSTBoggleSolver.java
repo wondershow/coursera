@@ -1,11 +1,14 @@
 package class4.hw;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 
 public class TSTBoggleSolver
 {
 	private TST<Integer> trie;
+	//private ArrayTrie<Integer> test;
+	private int N;
 	
 	public static void main(String[] args)
 	{
@@ -23,80 +26,49 @@ public class TSTBoggleSolver
     public Iterable<String> getAllValidWords(BoggleBoard board)
     {
     	if (board == null) throw new NullPointerException();
-    	HashSet<String> set = new HashSet<String>();
+    	Collection<String> set = new HashSet<String>();
     	int row = board.rows(), col = board.cols();
     	boolean[][] marked;
+    	marked = new boolean[board.rows()][board.cols()];
+    	//StringBuilder sb = new StringBuilder("");
     	for (int i = 0; i < row; i++)
     		for (int j = 0; j < col; j++) 
-    		{
-    			marked = new boolean[board.rows()][board.cols()];
-    			marked[i][j] = true;
-    			dfs(i, j, board, set, marked, board.getLetter(i, j)+"");
-    		}
+    			dfs(i, j, board, set, marked, new StringBuilder());
     	return set;
     	//return trie.keys();
     }
     
-    private void dfs(int row, int col, BoggleBoard board, HashSet<String> set, boolean[][] marked, String pre) 
+    private void dfs(int row, int col, BoggleBoard board, Collection<String> set, boolean[][] marked, StringBuilder pre) 
     {
     	int ROW = board.rows(), COL = board.cols();
-    	String word = getWord(pre);
-    	//System.out.println(pre);
-    	if (trie.contains(word) && word.length() >= 3) set.add(word);
-    	if (!containsPrefix(word)) 
-    	{
-    		//System.out.println("returns at" + pre);
+    	if (row < 0 || col < 0 || row >= ROW || col >= COL || marked[row][col]) return;
+    	
+    	char c = board.getLetter(row, col);
+    	
+    	
+    	pushLetter(pre, c);
+    	String word = pre.toString();
+    	//System.out.println(N++ + ": word is " + word);
+    	if (word.length() >= 3 && trie.contains(word)) set.add(word);
+    	
+    	
+    	if (word.length() >= 3 && !containsPrefix(word)){
+    		popLetter(pre, c);
+    		//System.out.println(N++ + ": returns at " + word);
     		return;
     	}
     	
-    	if (row > 0 && !marked[row - 1][col]) 
-    	{ 
-    		marked[row - 1][col] = true;
-    		dfs(row - 1, col, board, set, marked, pre + board.getLetter(row - 1, col));
-    		marked[row - 1][col] = false;
-    	}
-    	if (col > 0 && !marked[row][col - 1]) 
-    	{ 
-    		marked[row][col - 1] = true;
-    		dfs(row, col - 1, board, set, marked, pre + board.getLetter(row, col - 1));
-    		marked[row][col - 1] = false;
-    	}
-    	if (row < ROW - 1 && !marked[row + 1][ col])  
-    	{ 
-    		marked[row + 1][col] = true;
-    		dfs(row + 1, col, board, set, marked, pre + board.getLetter(row + 1, col));
-    		marked[row + 1][col] = false;
-    	}
-    	if (col < COL - 1 && !marked[row][col + 1]) 
-    	{ 
-    		marked[row][col + 1] = true;
-    		dfs(row, col + 1, board, set, marked, pre + board.getLetter(row, col + 1));
-    		marked[row][col + 1] = false;
-    	}
-    	if (row > 0 && col > 0 && !marked[row - 1][col - 1] ) 
-    	{ 
-    		marked[row - 1][col - 1] = true;
-    		dfs(row - 1, col - 1, board, set, marked, pre + board.getLetter(row - 1, col - 1));
-    		marked[row - 1][col - 1] = false;
-    	}
-    	if (row < ROW - 1 && col < COL - 1 && !marked[row + 1][col + 1]) 
-    	{
-    		marked[row + 1][col + 1] = true;
-    		dfs(row + 1, col + 1, board, set, marked, pre + board.getLetter(row + 1, col + 1));
-    		marked[row + 1][col + 1] = false;
-    	}
-    	if (row > 0 && col < COL - 1 && !marked[row - 1][col + 1]) 
-    	{ 
-    		marked[row - 1][col + 1] = true;
-    		dfs(row - 1, col + 1, board, set, marked, pre + board.getLetter(row - 1, col + 1));
-    		marked[row - 1][col + 1] = false;
-    	}
-    	if (row < ROW - 1 && col > 0 && !marked[row + 1][col - 1]) 
-    	{ 
-    		marked[row + 1][ col - 1] = true;
-    		dfs(row + 1, col - 1, board, set, marked, pre + board.getLetter(row + 1, col - 1));
-    		marked[row + 1][ col - 1] = false;
-    	}
+    	marked[row][col] = true;
+		dfs(row - 1, col, board, set, marked, pre);
+		dfs(row, col - 1, board, set, marked, pre);
+		dfs(row + 1, col, board, set, marked, pre);
+		dfs(row, col + 1, board, set, marked, pre);
+		dfs(row - 1, col - 1, board, set, marked, pre);
+		dfs(row + 1, col + 1, board, set, marked, pre);
+		dfs(row - 1, col + 1, board, set, marked, pre);
+		dfs(row + 1, col - 1, board, set, marked, pre);
+		marked[row][col] = false;
+		popLetter(pre, c);
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -124,5 +96,17 @@ public class TSTBoggleSolver
     {
     	if (trie.containsPrefixOf(pre)) return true;
     	return false;
+    }
+    
+    private void pushLetter(StringBuilder sb, char c) 
+    {
+    	sb.append(c);
+    	if (c == 'Q') sb.append('U');
+    }
+    
+    private void popLetter(StringBuilder sb, char c)
+    {
+    	sb.setLength(sb.length() - 1);
+    	if (c == 'Q') sb.setLength(sb.length() - 1);
     }
 }
