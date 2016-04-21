@@ -4,25 +4,20 @@ import java.util.Collection;
 import java.util.HashSet;
 
 
-public class TSTBoggleSolver
+public class TrieBoggleSolver
 {
-	private TST<Integer> trie;
-	//private ArrayTrie<Integer> test;
-	private int N;
+	private TrieSET trie;
 	
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-	}
-	
-	public TSTBoggleSolver(String[] dictionary) 
-	{
-		trie = new TST<Integer>();
-		for (int i = 0; i < dictionary.length; i++)
-			trie.put(dictionary[i], 0);
-	}
-	
-	// Returns the set of all valid words in the given Boggle board, as an Iterable.
+	// Initializes the data structure using the given array of strings as the dictionary.
+    // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
+    public TrieBoggleSolver(String[] dictionary)
+    {
+    	trie = new TrieSET();
+    	for (int i = 0; i < dictionary.length; i++)
+    		trie.add(dictionary[i]);
+    }
+    
+    // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board)
     {
     	if (board == null) throw new NullPointerException();
@@ -35,7 +30,6 @@ public class TSTBoggleSolver
     		for (int j = 0; j < col; j++) 
     			dfs(i, j, board, set, marked, new StringBuilder());
     	return set;
-    	//return trie.keys();
     }
     
     private void dfs(int row, int col, BoggleBoard board, Collection<String> set, boolean[][] marked, StringBuilder pre) 
@@ -69,7 +63,9 @@ public class TSTBoggleSolver
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word)
     {
+    	if (word == null) throw new NullPointerException();
     	if (!trie.contains(word)) return 0;
+    	//String realWord = getWord(word);
     	int len = word.length();
     	if (len <= 2) return 0;
     	if (len <= 4) return 1;
@@ -79,10 +75,10 @@ public class TSTBoggleSolver
     	return 11;
     }
     
-    // returns if the treeset contains elements that has a given prefix
+    //returns if the treeset contains elements that has a given prefix
     private boolean containsPrefix(String pre) 
     {
-    	if (trie.containsPrefixOf(pre)) return true;
+    	if (trie.hasPrefixOf(pre)) return true;
     	return false;
     }
     

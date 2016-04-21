@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class BoggleSolver
 {
-	private TSTBoggleSolver solver; 
+	private TrieBoggleSolver solver; 
 	public static void main(String[] args)
 	{
 		String path1 = "./src/class4/hw/files/dictionary-algs4.txt";
@@ -27,7 +27,7 @@ public class BoggleSolver
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary)
     {
-    	solver = new TSTBoggleSolver(dictionary);
+    	solver = new TrieBoggleSolver(dictionary);
     }
     
     /***

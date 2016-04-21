@@ -24,5 +24,11 @@ tail -n +2 tmp.java > TSTBoggleSolver.java;
 cp  ~/coursera/princeton/algoritm2/2ndtime/src/class4/hw/TST.java ./tmp.java;
 tail -n +2 tmp.java > TST.java;
 
+cp  ~/coursera/princeton/algoritm2/2ndtime/src/class4/hw/TrieSET.java ./tmp.java;
+tail -n +2 tmp.java > TrieSET.java;
 
-zip hw4.zip TreeSetBoggleSolver.java BoggleSolver.java TSTBoggleSolver.java TST.java
+cp  ~/coursera/princeton/algoritm2/2ndtime/src/class4/hw/TrieBoggleSolver.java ./tmp.java;
+tail -n +2 tmp.java > TrieBoggleSolver.java;
+
+
+zip hw4.zip TreeSetBoggleSolver.java BoggleSolver.java TSTBoggleSolver.java TST.java TrieSET.java TrieBoggleSolver.java
