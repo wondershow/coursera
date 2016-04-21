@@ -69,14 +69,20 @@ public class TrieSET implements Iterable<String> {
     public boolean hasPrefixOf(String pre) 
     {	
     	Node x;
+    	/*
     	if (queryStr!= null && pre.startsWith(queryStr))
     		x = search(queryCache, pre, queryStr.length());
     	else
     		x = search(root, pre, 0);
     	if (x == null) return false;
     	queryCache = x;
-    	queryStr = pre;
-    	return true;
+    	queryStr = pre;*/
+    	
+    	/*
+    	x = search(root, pre, 0);
+    	if (x == null) return false;
+    	return true;*/
+    	return search(pre);
     }
     
     private Node search(Node x, String key, int d) 
@@ -87,6 +93,17 @@ public class TrieSET implements Iterable<String> {
     	return search(x.next[charOf(c)], key, d+1); 
     }
     
+    private boolean search(String key)
+    {
+    	if (root == null) return false;
+    	Node x = root;
+    	
+    	for (int len = 0; x != null && len < key.length(); len++) 
+    		x = x.next[charOf(key.charAt(len))];
+    	
+    	if (x == null) return false;
+    	return true;
+    }
 
     /**
      * Adds the key to the set if it is not already present.
