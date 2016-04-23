@@ -23,7 +23,7 @@ public class KMP
 	}
 	
 	/***
-	 * use KMP search to look for a pattern in the context
+	 * use KMP search to search a pattern in the context
 	 * 
 	 * @param txt: the context string
 	 * @return the index of 1st matched substring or txt length if not found
