@@ -30,19 +30,26 @@ public class TSTBoggleSolver
     	int row = board.rows(), col = board.cols();
     	boolean[][] marked;
     	marked = new boolean[board.rows()][board.cols()];
+    	
+    	
+    	char[][] matrix = new char[board.rows()][board.cols()];
+    	for (int i = 0; i < row; i++)
+    		for (int j = 0; j < col; j++)
+    			matrix[i][j] = board.getLetter(i, j);
     	//StringBuilder sb = new StringBuilder("");
     	for (int i = 0; i < row; i++)
     		for (int j = 0; j < col; j++) 
-    			dfs(i, j, board, set, marked, new StringBuilder());
+    			dfs(i, j, matrix, set, marked, new StringBuilder());
+    	
     	return set;
     	//return trie.keys();
     }
     
-    private void dfs(int row, int col, BoggleBoard board, Collection<String> set, boolean[][] marked, StringBuilder pre) 
+    private void dfs(int row, int col, char[][] matrix, Collection<String> set, boolean[][] marked, StringBuilder pre) 
     {
-    	int ROW = board.rows(), COL = board.cols();
+    	int ROW = matrix.length, COL = matrix[0].length;
     	if (row < 0 || col < 0 || row >= ROW || col >= COL || marked[row][col]) return;
-    	char c = board.getLetter(row, col);
+    	char c = matrix[row][col];
     	pushLetter(pre, c);
     	String word = pre.toString();
     	//System.out.println(N++ + ": word is " + word);
@@ -53,14 +60,14 @@ public class TSTBoggleSolver
     		return;
     	}
     	marked[row][col] = true;
-		dfs(row - 1, col, board, set, marked, pre);
-		dfs(row, col - 1, board, set, marked, pre);
-		dfs(row + 1, col, board, set, marked, pre);
-		dfs(row, col + 1, board, set, marked, pre);
-		dfs(row - 1, col - 1, board, set, marked, pre);
-		dfs(row + 1, col + 1, board, set, marked, pre);
-		dfs(row - 1, col + 1, board, set, marked, pre);
-		dfs(row + 1, col - 1, board, set, marked, pre);
+		dfs(row - 1, col, matrix, set, marked, pre);
+		dfs(row, col - 1, matrix, set, marked, pre);
+		dfs(row + 1, col, matrix, set, marked, pre);
+		dfs(row, col + 1, matrix, set, marked, pre);
+		dfs(row - 1, col - 1, matrix, set, marked, pre);
+		dfs(row + 1, col + 1, matrix, set, marked, pre);
+		dfs(row - 1, col + 1, matrix, set, marked, pre);
+		dfs(row + 1, col - 1, matrix, set, marked, pre);
 		marked[row][col] = false;
 		popLetter(pre, c);
     }

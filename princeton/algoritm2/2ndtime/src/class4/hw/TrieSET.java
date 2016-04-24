@@ -95,9 +95,7 @@ public class TrieSET implements Iterable<String> {
     
     private boolean search(String key)
     {
-    	if (root == null) return false;
     	Node x = root;
-    	
     	for (int len = 0; x != null && len < key.length(); len++) 
     		x = x.next[charOf(key.charAt(len))];
     	
