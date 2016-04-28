@@ -149,4 +149,10 @@ public class Huffman
 		}
 		BinaryStdOut.close();
 	}
+	
+	public static void main(String[] args) {
+        if      (args[0].equals("-")) compress();
+        else if (args[0].equals("+")) expand();
+        else throw new IllegalArgumentException("Illegal command line argument");
+    }
 }
