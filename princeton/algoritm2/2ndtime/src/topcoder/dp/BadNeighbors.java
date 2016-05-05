@@ -11,15 +11,11 @@ public class BadNeighbors
 
 	public static int maxDonations(int[] donations)
 	{
-		
 		int N = donations.length;
 		
 		if (N == 1) return donations[0];
 		if (N == 2) return donations[0] > donations[1] ? donations[0] : donations[1];
-		//int[] max = new int[N];
-		
-	
-		
+
 		int i = 0;
 		
 		boolean[] donated = new boolean[N];
@@ -28,13 +24,10 @@ public class BadNeighbors
 		max[0] = donations[0];
 		include_0[0] = true;
 		
-		
 		if ( donations[0] > donations[1] ) 
 		{ max[1] = donations[0]; donated[1] = false; include_0[1] = true; 	}
 		else 
 		{ max[1] = donations[1]; donated[1] = true; include_0[1] = false;  }
-		
-		
 		
 		for (i = 2; i <= N - 1; i++)
 		if (max[i-2] +  donations[i] >= max[i-1]) 
@@ -57,14 +50,6 @@ public class BadNeighbors
 			res = max[N-1];
 		
 		
-		/*
-		for ( i = 0; i < N; i++)
-		{
-			System.out.println(i + " : " + max[i] + "," + donated[i] + "," +  include_0[i]);
-		}
-		//max[0] = donations[0];*/
-		
-				
 		return res;
 	}
 }

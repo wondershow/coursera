@@ -8,7 +8,7 @@ import topcoder.dp.BadNeighbors;
 
 public class BadNeighborsTest
 {
-	/*
+	
 	@Test
 	public void test1()
 	{
@@ -51,7 +51,7 @@ public class BadNeighborsTest
 		int[] input = {1,3,1,1,5,1};
 		int res = BadNeighbors.maxDonations(input);
 		assertEquals(res, 8);
-	}*/
+	}
 	
 	
 	@Test
