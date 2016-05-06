@@ -8,6 +8,20 @@ import edu.princeton.cs.algs4.BinaryStdOut;
 public class BurrowsWheeler
 {
 	private static int R = 256;
+	
+	private static class CharWithIndex
+	{
+		public char c;
+		public int index;
+		
+		public CharWithIndex(char ch, int i)
+		{
+			c = ch;
+			index = i;
+		}
+	}
+	
+	
 	// apply Burrows-Wheeler encoding, reading from standard input and writing to standard output
     public static void encode()
     {
@@ -32,6 +46,7 @@ public class BurrowsWheeler
         BinaryStdOut.close();
     }
 
+    
     // apply Burrows-Wheeler decoding, reading from standard input and writing to standard output
     public static void decode()
     {
@@ -41,30 +56,18 @@ public class BurrowsWheeler
     	
     	String s = BinaryStdIn.readString();
     	int N = s.length();
+    	CharWithIndex[] cws = new CharWithIndex[N];
     	
-    	int[] t  = new int[N];
-    	for (int i = 0; i < N; i++) t[i] = s.charAt(i);
+    	for (int i = 0; i < N; i++) 
+    		cws[i] = new CharWithIndex(s.charAt(i), i);
+    	
+    	sortArr(cws);
+    	
     	int[] next = new int[N];
-    	Arrays.fill(next, -1);
-    	
-    	
-    	int[] firstChars = sortArr(t, N, s);
     	
     	for (int i = 0; i < N; i++)
-    	{
-    		char c = (char)firstChars[i];
-    		int j = 0;
-    		for (j = 0; j < N; j++)
-    		{
-    			if (t[j] == c) 
-    			{
-    				t[j] = -1;
-    				next[i] = j; 
-    				break; 
-    			}
-    		}
+    		next[i] = cws[i].index;
     		//System.out.println(c + " : " +  "j = " + j + ", t[j] = " + t[j]);
-    	}
     	
     	/*
     	for (int i =0; i < N; i++)
@@ -74,43 +77,44 @@ public class BurrowsWheeler
     	int len = 1;
     	while (true) 
     	{
-    		char c = (char)firstChars[index];
+    		char c = cws[index].c;
     		BinaryStdOut.write(c, 8);
     		index = next[index];
     		if (len == N ) break;
     		len++;
     	}
     	
-    	//for (int i = 0; i < N; i++)
-    		//System.out.println(next[i]);
     	BinaryStdOut.flush();
         BinaryStdOut.close();
     }
     
-    private static int[] sortArr(int[] t, int N, String s)
+    private static void sortArr(CharWithIndex[] nodes)
     {
-    	int[] res = new int[N];
+    	
+    	int N = nodes.length;
+    	CharWithIndex[] aux = new CharWithIndex[N];
     	
     	int[] count = new int[R+1];
-    	
     	for (int i = 0; i < N; i++)
-    		count[s.charAt(i) + 1]++;
+    		count[nodes[i].c + 1]++;
     	for (int i = 1; i <= R; i++)
     		count[i] += count[i-1];
     	for (int i = 0; i <N; i++)
     	{
-    		char c = (char)t[i];
-    		res[count[(int)c]++] = c;
+    		char c = nodes[i].c;
+    		aux[count[(int)c]++] = nodes[i];
+    	}
+    	
+    	for (int i = 0; i < N; i++)
+    	{
+    		nodes[i] = aux[i];
     	}
     	/*
     	for (int i = 0; i < N; i++)
     		System.out.println(res[i]);*/
     	
-    	return res;
     }
 
-    // if args[0] is '-', apply Burrows-Wheeler encoding
-    // if args[0] is '+', apply Burrows-Wheeler decoding
     public static void main(String[] args)
     {
     	if (args.length < 1) throw new java.lang.NullPointerException();
