@@ -50,8 +50,7 @@ public class CircularSuffixArray
 	private void quick3sort(int[] rank, int lo, int hi, int d)
 	{
 		//System.out.println("hi = " + hi + ", lo = " + lo + " d = " + d);
-		if (d >= N) return;
-		if ( hi <= lo + CUTOFF ) 
+		if ( hi <= lo + CUTOFF) 
 		{
 			insertion(rank, lo, hi, d);
 			return;
@@ -70,7 +69,8 @@ public class CircularSuffixArray
 		}
 		
 		quick3sort(rank, lo, lt-1, d);
-		quick3sort(rank, lt, gt, d+1);
+		if (d < N)
+			quick3sort(rank, lt, gt, d+1);
 		quick3sort(rank, gt+1, hi, d);
 	}
 	
@@ -84,7 +84,7 @@ public class CircularSuffixArray
 	private void insertion(int[] rank, int lo, int hi, int d) 
 	{
 		
-		for (int i = lo; i < hi; i++)
+		for (int i = lo; i <= hi; i++)
 			for (int j = i; j > lo; j--)
 			{
 				if ( compare(rank, j, j-1, d) < 0 )
@@ -100,6 +100,7 @@ public class CircularSuffixArray
 		while (d<=N-1 && charAt(rank[i], d) == charAt(rank[j], d)) d++;
 		return charAt(rank[i], d) - charAt(rank[j], d);
 	}
+	
 	
 	/*
 	private void LSDSort(char[] sfxChar, MySubStr[] subStrArr) 
