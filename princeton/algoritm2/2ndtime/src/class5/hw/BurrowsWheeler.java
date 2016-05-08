@@ -58,10 +58,6 @@ public class BurrowsWheeler
     	char[] firstColumn = new char[s.length()];
     	int[] count = new int[R + 1];
     	
-    	//CharWithIndex[] cws = new CharWithIndex[N];
-    	
-    	//for (int i = 0; i < N; i++) 
-    		//cws[i] = new CharWithIndex(s.charAt(i), i);
     	for (int i = 0; i < N; i++) count[s.charAt(i) + 1]++;
     	for (int i = 0; i <	R; i++) count[i + 1] += count[i];
     	for (int i = 0; i < N; i++)
@@ -77,27 +73,6 @@ public class BurrowsWheeler
     		BinaryStdOut.write(firstColumn[first]);
     		first = next[first];
     	}
-    	
-    	 //= new int[N];
-    	//next = sortArr(cws);
-    	
-    	/*
-    	for (int i = 0; i < N; i++)
-    		next[i] = cws[i].index;
-    		//System.out.println(c + " : " +  "j = " + j + ", t[j] = " + t[j]);
-    	for (int i =0; i < N; i++)
-    		System.out.println(i + " : " + next[i]);
-    	
-    	int index = first;
-    	int len = 1;
-    	while (true) 
-    	{
-    		char c = cws[index].c;
-    		BinaryStdOut.write(c, 8);
-    		index = next[index];
-    		if (len == N ) break;
-    		len++;
-    	} */
     	
     	BinaryStdOut.flush();
         BinaryStdOut.close();
