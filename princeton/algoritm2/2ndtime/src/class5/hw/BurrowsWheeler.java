@@ -52,26 +52,41 @@ public class BurrowsWheeler
     {
     	int first = BinaryStdIn.readInt(32);
     	
-    	//System.out.println("first = " + first);
-    	
     	String s = BinaryStdIn.readString();
     	int N = s.length();
-    	CharWithIndex[] cws = new CharWithIndex[N];
+    	int[] next = new int[s.length()];
+    	char[] firstColumn = new char[s.length()];
+    	int[] count = new int[R + 1];
     	
-    	for (int i = 0; i < N; i++) 
-    		cws[i] = new CharWithIndex(s.charAt(i), i);
+    	//CharWithIndex[] cws = new CharWithIndex[N];
     	
-    	sortArr(cws);
+    	//for (int i = 0; i < N; i++) 
+    		//cws[i] = new CharWithIndex(s.charAt(i), i);
+    	for (int i = 0; i < N; i++) count[s.charAt(i) + 1]++;
+    	for (int i = 0; i <	R; i++) count[i + 1] += count[i];
+    	for (int i = 0; i < N; i++)
+    	{
+    		char c = s.charAt(i);
+    		int index = count[c]++;
+    		firstColumn[index] = c;
+    		next[index] = i;
+    	}
     	
-    	int[] next = new int[N];
+    	for (int i = 0 ; i< N; i++)
+    	{
+    		BinaryStdOut.write(firstColumn[first]);
+    		first = next[first];
+    	}
     	
+    	 //= new int[N];
+    	//next = sortArr(cws);
+    	
+    	/*
     	for (int i = 0; i < N; i++)
     		next[i] = cws[i].index;
     		//System.out.println(c + " : " +  "j = " + j + ", t[j] = " + t[j]);
-    	
-    	/*
     	for (int i =0; i < N; i++)
-    		System.out.println(i + " : " + next[i]);*/
+    		System.out.println(i + " : " + next[i]);
     	
     	int index = first;
     	int len = 1;
@@ -82,23 +97,26 @@ public class BurrowsWheeler
     		index = next[index];
     		if (len == N ) break;
     		len++;
-    	}
+    	} */
     	
     	BinaryStdOut.flush();
         BinaryStdOut.close();
     }
     
-    private static void sortArr(CharWithIndex[] nodes)
+    private static int[] sortArr(CharWithIndex[] nodes)
     {
-    	
     	int N = nodes.length;
+    	int[] index = new int[N];
     	CharWithIndex[] aux = new CharWithIndex[N];
     	
     	int[] count = new int[R+1];
+    	
     	for (int i = 0; i < N; i++)
     		count[nodes[i].c + 1]++;
+    	
     	for (int i = 1; i <= R; i++)
     		count[i] += count[i-1];
+    	
     	for (int i = 0; i <N; i++)
     	{
     		char c = nodes[i].c;
@@ -108,11 +126,9 @@ public class BurrowsWheeler
     	for (int i = 0; i < N; i++)
     	{
     		nodes[i] = aux[i];
+    		index[i] = aux[i].index;
     	}
-    	/*
-    	for (int i = 0; i < N; i++)
-    		System.out.println(res[i]);*/
-    	
+    	return index;
     }
 
     public static void main(String[] args)
