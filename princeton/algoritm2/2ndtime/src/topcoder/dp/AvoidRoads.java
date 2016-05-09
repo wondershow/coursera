@@ -72,6 +72,7 @@ public class AvoidRoads
 		return res[l][w];
 	}
 	
+	//binary search if a street is blocked or not
 	private static boolean search(int[][] bads, int[] street)
 	{
 		int lo = 0, hi = bads.length - 1;
