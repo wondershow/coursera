@@ -14,11 +14,13 @@ public class BST<Key, Value> extends ST<Key, Value>
 		Value v;
 		int count;
 		Node left, right;
+		int height;
 		
 		public Node(Key key, Value val)
 		{
 			k = key;
 			v = val;
+			height = 0;
 		}
 	}
 	
@@ -221,6 +223,7 @@ public class BST<Key, Value> extends ST<Key, Value>
 			n.right = delMin(t.right);
 		}
 		n.count = 1 + count(n.left) + count(n.right);
+		//n.height = 1 + Math.max(n.left, b)
 		return n;
 	}
 	
@@ -246,5 +249,38 @@ public class BST<Key, Value> extends ST<Key, Value>
 	public Iterable<Key> keys() 
 	{
 		return keys(min(), max());
+	}
+	
+	public int height()
+	{
+		return	height(root);
+	}
+	
+	private int height(Node t)
+	{
+		if (t == null) return -1;
+		return 1 + Math.max(height(t.left), height(t.right));
+	}
+	
+	public int heightNonrecur()
+	{
+		if (root == null) return -1;
+		else return root.height;
+	}
+	
+	/**
+	 * Non recursion version of get
+	 * */
+	public Key getNonRecur(Key key)
+	{
+		Node x = root;
+		while (x != null)
+		{
+			int cmp = compare(key, x.k);
+			if (cmp == 0) return x.k;
+			if (cmp > 0) x = x.right;
+			x = x.left;
+		}
+		return null;
 	}
 }
