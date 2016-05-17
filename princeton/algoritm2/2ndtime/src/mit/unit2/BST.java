@@ -7,7 +7,7 @@ import edu.princeton.cs.algs4.Queue;
 /**
  * This is the recursive version of Binary Search Tree
  * **/
-public class BST1<Key, Value> extends ST<Key, Value>
+public class BST<Key, Value> extends ST<Key, Value>
 {
 	private Node root;
 	private Comparator<Key> comparator;
@@ -338,18 +338,53 @@ public class BST1<Key, Value> extends ST<Key, Value>
 		else return comparator.compare(k1,k2);
 	}
 	
+	/**
+	 * Returns the number of keys in the symbol table in the given range.
+	 * **/
 	public int size(Key lo, Key hi)
 	{
+		if (lo == null || hi == null)
+			throw new NullPointerException("the keys are not supposed to be null");
+		if (compare(lo, hi) > 0) return 0;
 		
+		if (contains(hi)) return rank(hi) - rank(lo) + 1;
+		return rank(hi) - rank(lo);
 	}
 	
+	/**
+	 * returns the height of the tree
+	 * */
 	public int height()
 	{
-		
+		return height(root);
 	}
 	
-	public int levelOrder(Key key)
+	private int height(Node n) 
 	{
-		
+		if (n == null) return -1;
+		return 1 + Math.max(height(n.left), height(n.right));
 	}
+	
+	/**
+	 * 
+	 * */
+	public Iterable<Key> levelOrder(Key key)
+	{
+		if (isEmpty()) return null;
+		Queue<Key> kQue = new Queue<Key>();
+		Queue<Node> nQue = new Queue<Node>();
+		
+		nQue.enqueue(root);
+		kQue.enqueue(root.k);
+		while (!nQue.isEmpty())
+		{
+			Node n = nQue.dequeue();
+			if (n.left != null) nQue.enqueue(n.left);
+			if (n.right != null) nQue.enqueue(n.right);
+			kQue.enqueue(n.k);
+		}
+		
+		return kQue;
+	}
+	
 }
