@@ -182,7 +182,7 @@ public class BST<Key, Value> extends ST<Key, Value>
 			if (n.left == null) return n.right;
 			if (n.right == null) return n.left;
 			Node t = n;
-			n = max(n.right);
+			n = min(n.right);
 			n.right = delMin(t.right);
 			n.left = t.left;
 		}
