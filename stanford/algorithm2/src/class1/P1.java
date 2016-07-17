@@ -17,11 +17,8 @@ public class P1
 		}
 	}
 	
-	public static void main(String[] args)
+	private static Job[] readInJobs(String file)
 	{
-		// TODO Auto-generated method stub
-		String file = "/Users/leizhang/coursera/stanford/algorithm2/src/class1/jobs.txt";
-		//int[] weights, lengths;
 		Job[] jbs = null;// 
 		int N;
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -47,8 +44,18 @@ public class P1
 		{
 			e.printStackTrace();
 		}
+		return jbs;
+	}
+	
+	public static void main(String[] args)
+	{
+		// TODO Auto-generated method stub
+		String file = "/Users/leizhang/coursera/stanford/algorithm2/src/class1/jobs.txt";
+		//int[] weights, lengths;
 		
-		Arrays.sort(jbs, new JobDiffComp());
+		Job[] jbs = readInJobs(file);
+		
+		Arrays.sort(jbs, new JobRatioComp());
 		
 		long cmpl = 0, sumOfW = 0;
 		for (Job j : jbs)
