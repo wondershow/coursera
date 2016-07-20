@@ -11,19 +11,26 @@ public class Edge
 		weight = _w; 
 	}
 	
-	int other (int w)
+	public int other (int w)
 	{
 		if (w == u) return v; 
 		else return u;
 	}
 	
-	int weight()
+	public int weight()
 	{
 		//return this.weight();
 		return weight;
 	}
 	
-	int vertex() {
+	public int vertex() {
 		return u;
+	}
+	
+	public String toString() {
+		if (u > v)
+			return u + ":" + v + ":" + weight;
+		else
+			return v + ":" + u + ":" + weight;
 	}
 }
