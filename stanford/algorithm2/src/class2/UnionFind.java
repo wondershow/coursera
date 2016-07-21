@@ -1,5 +1,11 @@
 package class2;
 
+
+/***
+ * 
+ * A UnionFind with find as log*N
+ * and union as logN
+ * */
 public class UnionFind
 {
 	private int[] parent, rank;
@@ -14,6 +20,10 @@ public class UnionFind
 
 	}
 	
+	
+	/**
+	 * How many points in this UF structure
+	 * **/
 	public UnionFind(int _N) {
 		N = _N;
 		connected = N;
@@ -26,12 +36,18 @@ public class UnionFind
 		}
 	}
 	
+	/***
+	 * Root of a node
+	 */
 	public int find(int n) {
 		while (n != parent[n])
 			n = parent[n];
 		return n;
 	}
 	
+	/**
+	 * Union two nodes
+	 * */
 	public void union(int u, int v)
 	{
 		int r1 = find(u), r2 = find(v);
@@ -50,6 +66,9 @@ public class UnionFind
 		connected--;
 	}
 	
+	/**
+	 * do the path compression
+	 * **/
 	private void compressPath(int u, int newroot)
 	{
 		while (parent[u] != newroot) {
@@ -59,6 +78,10 @@ public class UnionFind
 		}
 	}
 	
+	/***
+	 * How many connected components in this UF 
+	 * structure
+	 * */
 	public int clusters()
 	{
 		return this.connected;

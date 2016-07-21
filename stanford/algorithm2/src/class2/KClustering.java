@@ -1,5 +1,8 @@
 package class2;
 
+/***
+ * See standford algorthm part2 HW2. problem 1
+ * */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,14 +17,12 @@ import class1.EdgeComparator;
 
 public class KClustering
 {
-	//private static int[] parent, rank;
-	//private static int[][] weights;
 	private static ArrayList<Edge> edges;
-	//private static Edge[] edgeArray();
-	//M is edge #, N is node #
-	private static int N;
-	private static HashSet<String> MST;
 	private static UnionFind uf;
+	private static int N;
+	
+	// number of clusters we need
+	private static final int K = 4;
 	
 	public static void main(String[] args)
 	{
@@ -31,17 +32,13 @@ public class KClustering
 	
 	public static void readInEdges(String file)
 	{
-		//int N;
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 		    String firstline, line;
 		    firstline  = br.readLine();
 		    N = Integer.parseInt(firstline);
 		    uf = new UnionFind(N);
-//		    weights = new int[N+1][N+1];
-		    //edges = new Edge[N]
-//		    weights[0][0] = 1;
 		    edges = new ArrayList<Edge>();
-		    //Arrays.fill(val, weights); 
+		    
 		    line = br.readLine();
 		    while ( line != null) {
 		    		// process the line.
@@ -62,70 +59,45 @@ public class KClustering
 			e.printStackTrace();
 		}
 		
+		//sort the edges according to its weight
 		Collections.sort(edges, new EdgeComparator());
 	}
 	
+	/**
+	 * Use kruskal's way to connect points to form culusters. 
+	 * */
 	private static void kruskal()
 	{
-		
 		int components = N;
 		int index = 0;
 		
-		int res = Integer.MAX_VALUE;
-		while (components > 4)
+		
+		while (components > K)
 		{
 			Edge ed = edges.get(index);
-			System.out.println(ed.weight());
 			
 			int u = ed.vertex();
 			int v = ed.other(u);
-			//System.out.println( tmp[0] + " , " + tmp[1] + " : " + heap.firstEntry().getKey() );
-			//components--;
 			
 			if (uf.find(u) != uf.find(v)) {
 				uf.union(u, v);
-				//System.out.println("union:" + u +  ":" + v + "," + ed.weight());
 				components--;
 			} 
-			//else System.out.println("dictching:"+ u +  ":" + v + "," + ed.weight());
 			index++;
 		}
 		
-		
-		int maxSpacing = Integer.MIN_VALUE;
-		
-		HashMap<String, Integer> distances = new HashMap<String, Integer>();
-		
+		int res = Integer.MAX_VALUE;
 		for (Edge e: edges){
 			int u = e.vertex();
 			int v = e.other(u);
 			
 			//u, v belong to same set
 			if (uf.find(u) == uf.find(v)) continue;
-			
-			
-			String key = uf.find(u) > uf.find(v) ? 
-					uf.find(u) + ":" + uf.find(v) : uf.find(v) + ":" + uf.find(u);
 		
 			if (e.weight() < res)
 				res = e.weight();
-//			System.out.println("here we are: " +  e.weight());
-//			if (!distances.containsKey(key)) {
-//				distances.put(key, e.weight());
-//				continue;
-//			}
-//			
-//			int oldMin = distances.get(key);
-//			if (e.weight() < res)
-//				distances.put(key, e.weight());
 		}
-		
-		
-//		for (int d : distances.values())
-//			if (d > res) res = d;
-		
 		System.out.println(res);
-		//System.out.println()
 	}
 	
 }
