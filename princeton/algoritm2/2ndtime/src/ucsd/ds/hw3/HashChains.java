@@ -29,6 +29,7 @@ public class HashChains {
             hash = (hash * multiplier + s.charAt(i)) % prime;
         return (int)hash % bucketCount;
     }
+    
 
     private Query readQuery() throws IOException {
         String type = in.next();
@@ -83,8 +84,11 @@ public class HashChains {
                 writeSearchResult(search(query));
                 break;
             case "check":
-                String tmp = buckets[query.ind].toString();
-                out.print(tmp.substring(1, tmp.length() - 1));
+                String tmp = "";
+                ArrayList<String> al = buckets[query.ind];
+                for (int i = 0; i < al.size(); i++)
+                		tmp += " " + al.get(i);
+                out.print(tmp.trim());
                 out.println();
                 // Uncomment the following if you want to play with the program interactively.
                 // out.flush();
