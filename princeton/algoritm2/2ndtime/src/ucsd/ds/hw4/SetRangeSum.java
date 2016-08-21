@@ -208,10 +208,10 @@ public class SetRangeSum {
         // Implement erase yourself
     		if (root == null) return;
     		
-    		this.printBST(root);
+    		//this.printBST(root);
     		VertexPair vp = 	find(root, x);
     		//System.out.println();
-    		this.printBST(root);
+    		//this.printBST(root);
     		//key x does not exist at all
     		if (vp.right.key != x) return;
     		
@@ -310,7 +310,7 @@ public class SetRangeSum {
                     int l = nextInt();
                     int r = nextInt();
                     //System.out.println("SSSSS b4:" + l + "," + r);
-            			this.printBST(root);
+            			//this.printBST(root);
                     long res = sum((l + last_sum_result) % MODULO, (r + last_sum_result) % MODULO);
                     out.println(res);
                     //System.out.println("SSSSS after:" + l + "," + r);
