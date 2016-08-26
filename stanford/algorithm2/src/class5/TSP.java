@@ -17,10 +17,10 @@ public class TSP
 {
 	// number of cities
 	private static int N;
-	private static double[] x, y;
+	private static float[] x, y;
 	//double
-	HashMap<HashSet<Integer>, Double> A1, A2;
-	private static double[][] distance;
+	HashMap<HashSet<Integer>, Float> A1, A2;
+	private static float[][] distance;
 	
 	private  static final String
 	TEST_CASE_PATH = "/Users/leizhang/coursera/stanford/algorithm2/src/class5/tsp.txt";
@@ -40,17 +40,17 @@ public class TSP
 			String firstline, line;
 			firstline  = br.readLine().trim();
 			N = Integer.parseInt(firstline);
-			x = new double[N];
-			y = new double[N];
-			distance = new double[N][N];
+			x = new float[N];
+			y = new float[N];
+			distance = new float[N][N];
 			
 			//int lineNumber = 1;
 			int i = 0;
 			while ( (line = br.readLine()) != null)
 			{
 				String[] tmp = line.split(" ");
-				x[i] = Double.parseDouble(tmp[0]);
-				y[i++] = Double.parseDouble(tmp[1]);
+				x[i] = Float.parseFloat(tmp[0]);
+				y[i++] = Float.parseFloat(tmp[1]);
 			}
 			populateDistance();
 		} catch (FileNotFoundException e)
@@ -63,85 +63,108 @@ public class TSP
 	}
 	
 	
-	private static void setSetMap(int s, int j, double d, HashMap<Integer, Double[]> A)
+	private static void setSetMap(int s, int j, float d, HashMap<Integer, Float[]> A)
 	{
-		Double[] dd = null;
+		Float[] dd = null;
 		if (!A.containsKey(s))  {
-			dd = new Double[N+1];
+			dd = new Float[N+1];
 			for (int i = 1; i <= N; i++)
-				dd[i] = Double.POSITIVE_INFINITY;
+				dd[i] = Float.POSITIVE_INFINITY;
 		}
 		else
 			dd = A.get(s);
 		dd[j] = d;
-		//String tmps = helper(s);
+		String tmps = helper(s);
 		//System.out.println("A ["+ tmps + "," + j + "] = " + d );
 		A.put(s, dd);
 	}
 	
-	private static double getSetMap(int s, int j, HashMap<Integer, Double[]> A) 
+	private static float getSetMap(int s, int j, HashMap<Integer, Float[]> A) 
 	{
-		Double[] dd = A.get(s);
-		if (dd == null) return Double.POSITIVE_INFINITY;
+		Float[] dd = A.get(s);
+		if (dd == null) return Float.POSITIVE_INFINITY;
 		return dd[j];
 	}
 	
 	
 	private static void TSP(){
-		ElementToHash A1 = new ElementToHash(N);
-		ElementToHash A2 = new ElementToHash(N);
+		HashMap<Integer, Float[]> A1 = new HashMap<Integer, Float[]>();
+		HashMap<Integer, Float[]> A2 = new HashMap<Integer, Float[]>();
 		
-		
-		A1.set(1, 1, 0.0d);
+		setSetMap(1, 1, 0.0f,  A1);
 		for (int i = 2; i <= N; i++)
-			A1.set(setBit(0, i), 1, Double.POSITIVE_INFINITY);
+			setSetMap(setBit(0, i), i, Float.POSITIVE_INFINITY, A1);
 		
-		
-		ElementToHash A_new, A_old;
+		for (int s = 2; s <= N; s++) 
+			for (int l = 1; l <= N; l++)
+				setSetMap(setBit(0, s), l, Float.POSITIVE_INFINITY, A1);
 		
 		for (int m = 2; m <= N; m++)
 		{
 			System.out.println("m = " + m);
-			A_new = ( A1.isEmpty() )? A1 : A2;
-			A_old = ( A1.isEmpty() )? A2 : A1;
-			Set<Integer> oldSet = A_old.keys();
+			long startTime = System.nanoTime();
+			HashMap<Integer, Float[]> A_new, A_old;
+			A_new = ( A1.size() == 0 )? A1 : A2;
+			A_old = ( A1.size() == 0 )? A2 : A1;
+			Set<Integer> oldSet = A_old.keySet();
 			Set<Integer> newSet = getLargerSubSets(oldSet);
 			System.out.println("newSet size " + newSet.size());
 			for (int s : newSet)
 			{
+//				for (int j = 2; j <= N; j++) 
+//				{
+//					Double min = Double.POSITIVE_INFINITY;
+//					for (int k = j+1; k <= N; k++) 
+//					{
+//						// if j is not included in the newer set
+//						if (!isBitSet(s, j)) continue; 
+//						
+//						int smallerS = resetBit(s, j);
+//						double dist2K =  getSetMap(smallerS, k, A_old);
+//						if (dist2K == Double.POSITIVE_INFINITY) continue;
+//						dist2K += distance(k, j);
+//						if (dist2K < min) min = dist2K;
+//					}
+//					setSetMap(s, j, min, A_new);
+//				}
 				if (!isBitSet(s, 1)) continue;
-				for (int j = 2; j <= N; j++)
+				for (int j = 1; j <= N; j++)
 				{
 					if (!isBitSet(s, j)) continue;
-					Double min = Double.POSITIVE_INFINITY;
+					Float min = Float.POSITIVE_INFINITY;
 					for (int k = 1; k <= N; k++)
 					{
 						if (!isBitSet(s, k) || k == j) continue; 
 						int smallerS = resetBit(s, j);
-						double dist2K =  A_old.get(smallerS, k);
+						float dist2K =  getSetMap(smallerS, k, A_old);
 						if (dist2K == Double.POSITIVE_INFINITY) continue;
 						dist2K += distance[k-1][j-1];
 						if (dist2K < min) min = dist2K;
 					}
-					A_new.set(s, j, min);
+					setSetMap(s, j, min, A_new);
 				}
 			}
 			A_old.clear();
-			System.out.println("tst");
+			long endTime = System.nanoTime();
+			System.out.println("time for size m = " + m + " is " + (endTime - startTime)/1000000000 + "s");
 		}
 		
-		ElementToHash A = (A1.isEmpty())? A2:A1;
-		Double res = Double.POSITIVE_INFINITY;
-		Set<Integer> lastSetS = A.keys();
-		System.out.println("size of last hashmap(should be 1 here) :" + lastSetS.size());
+		HashMap<Integer, Float[]> A = A1.size() == 0 ? A2:A1;
+		Float res = Float.POSITIVE_INFINITY;
+					
+//		System.out.println("size of last hashmap(should be 1 here) :" + A.size());
+		Set<Integer> lastSetS = A.keySet();
 //		for (int i : lastSetS )
 //			System.out.println(i);
 		int lastS = 0;
 		for (int i = 1; i <= N; i++)
 			lastS = setBit(lastS, i);
 //		System.out.println("lastS = " + lastS);
+		Float[] dd = A.get(lastS);
+		if (dd == null) System.out.println("there is an error here !:");
+		System.out.println(dd.length);
 		for (int i = 2; i <= N; i++)
-			if (A.get(lastS, i) + distance(1, i) < res ) res =  A.get(lastS, i) + distance(1, i);
+			if (dd[i] + (float)distance(1, i) < res ) res =  dd[i] + (float)distance(1, i);
 		System.out.println("TSP result is " + res);
 	}
 	
@@ -175,7 +198,7 @@ public class TSP
 				res.add(i);
 			}
 		}
-		System.out.println("out");
+		System.out.println("out ");
 		//System.out.println("New size " + res.size());
 		return res;
 	}
@@ -210,48 +233,6 @@ public class TSP
 	private static void populateDistance() {
 		for (int i = 1; i <= N; i++)
 			for (int j = 1; j <= N;j ++)
-			distance[i-1][j-1] = distance(i,j);
-	}
-	
-	static class ElementToHash {
-		int N;
-		HashMap<Integer, Double>[] maps;
-		HashSet<Integer> keySet;
-		
-		public ElementToHash(int n) {
-			N = n;
-			maps = new HashMap[N];
-			for (int i = 0; i < N; i++){
-				maps[i] = new HashMap<Integer, Double>();
-			}
-			keySet = new HashSet<Integer>();
-		}
-		
-		public void clear() {
-			for (int i = 0; i < N; i++)
-				maps[i].clear();
-			keySet.clear();
-		}
-		
-		public boolean isEmpty() {
-			for (int i = 0; i < N; i++)
-				if (maps[i].size() > 0) return false;
-			return true;
-		}
-		
-		public void set(int hash, int vertex, double dist) {
-			maps[vertex - 1].put(hash, dist);
-			keySet.add(hash);
-		}
-		
-		public double get(int hash, int vertex) {
-			if (maps[vertex - 1].containsKey(hash))
-				return maps[vertex - 1].get(hash) ;
-			return Double.POSITIVE_INFINITY;
-		}
-		
-		public Set<Integer> keys() {
-			return keySet;
-		}
+			distance[i-1][j-1] = (float)distance(i,j);
 	}
 }
